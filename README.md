@@ -1,131 +1,83 @@
-Universal Starter Kit to build any javascript ES6 project/library runnable in nodejs and on any browser
+Lens Crafter
 ====================
 
-[![Build Status][travis-image]][travis-url]
-[![Dependency Status][gemnasium-image]][gemnasium-url]
-[![NPM version][npm-version-image]][npm-url]
-[![NPM downloads][npm-downloads-image]][npm-url]
-[![Donate][donate-image]][paypal-link]
-[![MIT License][license-image]][license-url]
+## A Micro Library for immutable and safe state access 
 
 # Introduction
 
-javascript 2015/es6/next introduces a lot of new cool [features](https://babeljs.io/features.html) unfortunately not yet available in the current modern browsers. This starter kit contains all the tools you need to let you run your ES6 code on any kind of platform.
+This library aims to abstract away the manual creation of lenses or state selectors. In [redux](https://redux.js.org/) we might have an initial state that looks like the following: 
+  
+ ```$javascript
+const initialState = {
+  someList: [],
+  someOtherProperty: 1,
+  someNestedProperty: {
+    someNestedValue: 1,
+  },
+}
+```
 
-# Philosophy
+Now we could access these properties a variety of ways. 
 
-> Just use what you really need
+## Dot Properties - The naive approach
 
-This project __doesn't rely on any build system tool__ like gulp, grunt, duo...
-By using the [make](make.js) file and customizing the tasks in the [tasks](tasks) folder you should be able to develop any kind of javascript project just fitting it to your needs
+```$javascript
+// Normal Dot Properties
+const someList = initialState.someList;
+const someNestedValue = initialState.someList.someNestedValue;
+```
 
-## javascript ES6
+```$javascript
+// Object Destructuring
+const { someList, someNestedProperty: { someNestedValue } } = initialState;
+```
 
-```javascript
+But what if the structure of our state changes? This approach will result in an undefined value which could break the UI.
 
-import helpers from './helpers/helpers'
+## Selectors - A better approach
 
-/**
- * @class
- * An awesome script
- */
-class Greeter {
-  constructor(name = 'Dear Coder', text = 'hi there') {
-    this.name = name
-    this.text = text
-  }
-  get message() {
-    return `${this.text} ${this.name}!`
-  }
-  set message(text) {
-    this.text = helpers.trim(text)
-  }
+```$javascript
+import initialState from './state';
+// function to retrieve value with fallback
+const someNestedProperty = (state) => {
+   const { someNestedProperty } = state;
+   return state || initialState.someNestedProperty;
+};
+
+const someNestedValue = (state) => {
+   const { someNestedValue } = someNestedProperty(state);
+   return state || initialState.someNestedProperty.someNestedValue;
+};
+```
+
+This approach is better as it creates a fallback at each level of nesting. But to get a value on state shape change 
+the selectors need to be re-written. Also this does not provide a method by which we can set a value.
+
+## Lenses - The Lenscrafter approach. 
+
+> [A lens is a value that composes a getter and a setter function to produce a bidirectional view into a data structure.](https://docs.racket-lang.org/lens/lens-intro.html)
+
+Given that we always know our initial state shape in redux we can create a lens for every property in an object.
+
+```$javascript
+import lenscrafter as craft from 'lenscrafter'
+const initialState = {
+  someList: [],
+  someOtherProperty: 1,
+  someNestedProperty: {
+    someNestedValue: 1,
+  },
 }
 
-export default Greeter
+const currentState = {
+  someList: [],
+  someOtherProperty: 1,
+  someNestedProperty: {
+    someNestedValue: 'New Value',
+  },
+}
+// create getter and setter pairs for every property
+const ourSpecialLens = lenscrafter(initialState);
+ourSpecialLens.someNestedValue.get(/* state */); // 1
+ourSpeicalLens.someNestedValue.get(currentState); // 'New Value'
 ```
-
-```javascript
-var greeter = new Greeter()
-
-console.log(greeter.message) // -> "hi there Dear Coder!"
-// these white spaces will be trimmed
-greeter.message = '   goodbye         '
-console.log(greeter.message) // -> "goodbye Dear Coder!"
-
-```
-
-
-## Tools available
-
-- [babeljs](https://babeljs.io/)
-- [rollup](https://github.com/rollup/rollup)
-- [karma](https://github.com/karma-runner/karma)
-- [chai](https://github.com/chaijs/chai)
-- [eslint](https://github.com/eslint/eslint)
-- [sinon](https://github.com/cjohansen/Sinon.JS)
-- [serve](https://github.com/tj/serve)
-
-# Usage
-
-Once you've downloaded the files in this repo please run the following command in your terminal from the project folder (it may require `sudo`):
-
-```shell
-$ npm install
-```
-
-Browsing the [make](make.js) file you will find all the available terminal commands to compile/test your project. __This file contains also the script name used for the output__
-All the build tasks available are based on the __native javascript promises__ so you will be able to chain and combine them as you prefer
-
-If you have installed correctly all the nodejs modules you can start writing your javascript modules into the `src` folder of course using the awesome javascript es6 syntax.
-
-## Available tasks
-
-### Build and test
-```shell
-$ node make # or also `$ npm run default`
-```
-
-### Convert the ES6 code into valid ES5 combining all the modules into one single file
-```shell
-$ node make build # or also `$ npm run build`
-```
-
-### Run all the tests
-```shell
-$ node make test # or also `$ npm run test`
-```
-
-### Start a nodejs static server
-```shell
-$ node make serve # or also `$ npm run serve`
-```
-
-### To compile and/or test the project anytime a file gets changed
-```shell
-$ node make watch # or also `$ npm run watch`
-```
-
-# Showcase
-
-List of projects build with `es6-project-starter-kit` :
-
-- [parallax](https://github.com/GianlucaGuarini/parallax)
-- [Caronte.js](https://github.com/GianlucaGuarini/Caronte.js)
-
-[npm-url]: https://npmjs.org/package/es6-project-starter-kit
-[npm-version-image]: http://img.shields.io/npm/v/es6-project-starter-kit.svg?style=flat-square
-[npm-downloads-image]: http://img.shields.io/npm/dm/es6-project-starter-kit.svg?style=flat-square
-
-[gemnasium-image]: https://img.shields.io/gemnasium/GianlucaGuarini/es6-project-starter-kit.svg?style=flat-square
-[gemnasium-url]: https://gemnasium.com/GianlucaGuarini/es6-project-starter-kit
-
-[travis-url]:https://travis-ci.org/GianlucaGuarini/es6-project-starter-kit
-[travis-image]: https://img.shields.io/travis/GianlucaGuarini/es6-project-starter-kit.svg?style=flat-square
-
-[license-url]: LICENSE
-[license-image]: http://img.shields.io/badge/license-MIT-000000.svg?style=flat-square
-
-[paypal-link]:https://www.paypal.me/GianlucaGuarini
-[donate-image]:https://img.shields.io/badge/donate-%E2%9D%A4-brightgreen.svg?style=flat-square
-
