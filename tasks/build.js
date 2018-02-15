@@ -4,6 +4,11 @@ var utils = require('./_utils'),
   fs = require('fs'),
   babel = require('babel-core')
 
+var res =  require('rollup-plugin-node-resolve')
+var babelP = require('rollup-plugin-babel')
+
+console.log(res)
+
 module.exports = function(options) {
 
   // delete the old ./dist folder
@@ -18,7 +23,19 @@ module.exports = function(options) {
       // The bundle's starting point. This file will be
       // included, along with the minimum necessary code
       // from its dependencies
-      input: './src/index.js'
+      input: './src/index.js',
+      plugins: [
+        res({
+          jsnext: true,
+          browser: true,
+          main: true,
+          preferBuiltins: false
+        }),
+        babelP({
+          exclude: 'node_modules/**',
+          runtimeHelpers: false
+        })
+      ]
     }).then( function ( bundle ) {
       bundle.generate({
         format: 'cjs'

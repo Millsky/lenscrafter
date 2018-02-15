@@ -32,6 +32,6 @@ module.exports = function(config) {
     coverageReporter: {
       dir: './coverage/'
     },
-    singleRun: true
+    singleRun: false
   })
 }

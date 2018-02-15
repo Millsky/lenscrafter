@@ -45,6 +45,8 @@
     "mocha": "^4.0.1",
     "puppeteer": "^0.11.0",
     "rollup": "^0.50.0",
+    "rollup-plugin-babel": "^3.0.3",
+    "rollup-plugin-node-resolve": "^3.0.3",
     "serve": "^6.2.0",
     "sinon": "^4.0.1",
     "sinon-chai": "^2.14.0",
@@ -55,5 +57,8 @@
   "bugs": {
     "url": "https://github.com/GianlucaGuarini/es6-project-starter-kit/issues"
   },
-  "homepage": "https://github.com/GianlucaGuarini/es6-project-starter-kit"
+  "homepage": "https://github.com/GianlucaGuarini/es6-project-starter-kit",
+  "dependencies": {
+    "ramda": "^0.25.0"
+  }
 }
