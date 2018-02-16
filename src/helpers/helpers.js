@@ -11,7 +11,7 @@ const createGetterSetterPairs = customLens => ({
 
 /***
  * https://github.com/ramda/ramda/wiki/Cookbook#flatten-a-nested-object-into-dot-separated-key--value-pairs
- * @param obj
+ * @param obj - The object that needs to be flattened
  * @return {*}
  */
 const flattenObj = (obj) => {
