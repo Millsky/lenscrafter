@@ -108,6 +108,10 @@ Returns a new object with the specified property updated to the specified value
 #### `newLens.property.lens`:
 Returns the lens used for getting and setting, this is useful for further composition.
 
+# Installation
+
+To install: `npm install --save lenscrafter`
+
 # Contributing
 
 ## Running tests
