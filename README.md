@@ -87,25 +87,25 @@ It can be ensured that when getting state, a value will always be returned as a 
 
 # API 
 
-## `const newLens = lenscrafter(object)`
+## ```javascript const newLens = lenscrafter(object)```
 
 `object`: The object that the lens should be created for.
 
 ### Usage
 
-#### `newLens.property.get(object)`:
+#### ```javascript newLens.property.get(object)```:
 `object`: The object that the property should be retrieved for. If the object does not have the property it will fallback to the value of the property in the initial call to `lenscrafter`.
 
 Returns the current value of the object at the specified property
 
-#### `newLens.property.set(value, object)`: 
+#### ```javascript newLens.property.set(value, object)```: 
 `value`: The value to set the property to.
 
 `object`: The object for which the value should be set.
 
 Returns a new object with the specified property updated to the specified value 
 
-#### `newLens.property.lens`:
+#### ```javascript newLens.property.lens```:
 Returns the lens used for getting and setting, this is useful for further composition.
 
 # Installation
