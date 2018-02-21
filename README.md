@@ -28,7 +28,7 @@ const someList = initialState.someList;
 const someNestedValue = initialState.someList.someNestedValue;
 ```
 
-```$javascript
+```javascript
 // Object Destructuring
 const { someList, someNestedProperty: { someNestedValue } } = initialState;
 ```
