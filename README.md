@@ -8,7 +8,7 @@ Lens Crafter
 This library aims to abstract away the manual creation of lenses or state selectors. In [redux](https://redux.js.org/) 
 we might have an initial state that looks like the following: 
   
- ```$javascript
+ ```javascript
 const initialState = {
   someList: [],
   someOtherProperty: 1,
@@ -22,7 +22,7 @@ Now we could access these properties a variety of ways.
 
 ## Dot Properties - The naive approach
 
-```$javascript
+```javascript
 // Normal Dot Properties
 const someList = initialState.someList;
 const someNestedValue = initialState.someList.someNestedValue;
@@ -37,7 +37,7 @@ But what if the structure of our state changes? This approach will result in an 
 
 ## Selectors - A better approach
 
-```$javascript
+```javascript
 import initialState from './state';
 // function to retrieve value with fallback
 const someNestedProperty = (state) => {
@@ -60,7 +60,7 @@ the selectors need to be re-written. Also this does not provide a method by whic
 
 Given that we always know our initial state shape in redux we can create a lens for every property in an object.
 
-```$javascript
+```javascript
 import lenscrafter from 'lenscrafter'
 const initialState = {
   someList: [],
