@@ -6,13 +6,13 @@ import { chain, toPairs, fromPairs, map, lens, assoc, propOr, compose, view, set
 const createGetterSetterPairs = customLens => ({
   get: state => view(customLens, state),
   set: (value, state) => set(customLens, value, state),
-  lens: customLens,
+  lens: customLens
 })
 
 /***
  * https://github.com/ramda/ramda/wiki/Cookbook#flatten-a-nested-object-into-dot-separated-key--value-pairs
  * @param obj - The object that needs to be flattened
- * @return {*}
+ * @returns {*}
  */
 const flattenObj = (obj) => {
   const go = obj_ => chain(([k, v]) => {
@@ -44,7 +44,7 @@ function createLensForState(state) {
       // create a composed lens
       .reduce((pLens, cLens) => compose(pLens, cLens))
     // Add getter setter at dynamic key
-    object[key[key.length - 1]] = createGetterSetterPairs(customLens)
+    object[key.split('.')[key.split('.').length - 1]] = createGetterSetterPairs(customLens)
     return object
   }, {})
 }

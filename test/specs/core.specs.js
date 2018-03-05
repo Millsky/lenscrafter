@@ -79,6 +79,11 @@ describe('#createLensForState', function() {
       expect(lens.d.get(currentState)).to.equal(1)
       expect(lens.c.get(currentState)).to.equal(500)
     })
+    it('Should create properties with multiple letters', function() {
+      var initialState = { cool: 1, bool: 2 }
+      var lens = lenscrafter(initialState)
+      expect(lens.cool.get()).to.equal(1)
+    })
   })
   describe('#setters', function() {
     it('Should create a lens for a object of depth 1', function() {
