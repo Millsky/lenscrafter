@@ -9,21 +9,24 @@ const createGetterSetterPairs = customLens => ({
   lens: customLens
 })
 
-/***
- * https://github.com/ramda/ramda/wiki/Cookbook#flatten-a-nested-object-into-dot-separated-key--value-pairs
- * @param obj - The object that needs to be flattened
- * @returns {*}
- */
-const flattenObj = (obj) => {
-  const go = obj_ => chain(([k, v]) => {
-    if (Object.prototype.toString.call(v) === '[object Object]') {
-      return map(([k_, v_]) => [`${k}.${k_}`, v_], go(v))
-    }
-    return [[k, v]]
-  }, toPairs(obj_))
 
-  return fromPairs(go(obj))
+
+
+function flatten(input, reference, output) {
+  output = output || {}
+  for (var key in input) {
+    var value = input[key]
+    key = reference ? reference + '.' + key : key
+    if (typeof value === 'object' && value !== null) {
+      output[key] = value
+      flatten(value, key, output)
+    } else {
+      output[key] = value
+    }
+  }
+  return output
 }
+
 
 /*
  * Given a state create all the neccessary selectors irrespective of the shape.
@@ -32,7 +35,8 @@ const flattenObj = (obj) => {
  */
 function createLensForState(state) {
   // Flatten the state, keys become dot props
-  const flatState = flattenObj(state)
+  const flatState = flatten(state)
+  console.log(flatState)
   // create blank selectors object to populate
   return Object.keys(flatState).reduce((object, key) => {
     // check if key is a dot prop

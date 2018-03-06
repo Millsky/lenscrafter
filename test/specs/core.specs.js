@@ -80,9 +80,33 @@ describe('#createLensForState', function() {
       expect(lens.c.get(currentState)).to.equal(500)
     })
     it('Should create properties with multiple letters', function() {
-      var initialState = { cool: 1, bool: 2 }
+      var initialState = { cool: 1, bool: { a: 2 } }
       var lens = lenscrafter(initialState)
       expect(lens.cool.get()).to.equal(1)
+    })
+    it('Should create a lens for an object of depth 2 for all depth 1 properties', function() {
+      var state = {
+        a: {
+          b: {
+            c: 1
+          }
+        }
+      }
+      var lens = lenscrafter(state)
+      console.log(Object.keys(lens))
+      expect(true).to.equal(true)
+    })
+    it('Should return properties without direct values', function() {
+      var state = {
+        a: {
+          b: {
+            c: 1
+          }
+        }
+      }
+      var lens = lenscrafter(state)
+      var result = lens.b.get()
+      expect(result).to.deep.equal(state.a.b)
     })
   })
   describe('#setters', function() {
