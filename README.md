@@ -79,8 +79,8 @@ const currentState = {
 }
 // create getter and setter pairs for every property
 const ourSpecialLens = lenscrafter(initialState);
-ourSpecialLens.someNestedValue.get(/* state */); // 1
-ourSpeicalLens.someNestedValue.get(currentState); // 'New Value'
+ourSpecialLens.props.someNestedValue.get(/* state */); // 1
+ourSpeicalLens.props.someNestedValue.get(currentState); // 'New Value'
 ```
 using this method, the state retrieval process can be simplified into the one liner above. 
 It can be ensured that when getting state, a value will always be returned as a fallback instead of `undefined`. 
@@ -93,20 +93,26 @@ It can be ensured that when getting state, a value will always be returned as a 
 
 ### Usage
 
-#### ```newLens.property.get(object)```:
+#### ```newLens.props.property.get(object)```:
 `object`: The object that the property should be retrieved for. If the object does not have the property it will fallback to the value of the property in the initial call to `lenscrafter`.
 
 Returns the current value of the object at the specified property
 
-#### ```newLens.property.set(value, object)```: 
+#### ```newLens.props.property.set(value, object)```: 
 `value`: The value to set the property to.
 
 `object`: The object for which the value should be set.
 
 Returns a new object with the specified property updated to the specified value 
 
-#### ```newLens.property.lens```:
+#### ```newLens.props.property.lens```:
 Returns the lens used for getting and setting, this is useful for further composition.
+
+### ```newLens.getMany(propsArray, object)```
+
+`propsArray: Array<string>`: An array of properties to get the value of
+
+`object`: The object for which the values should be retrieved
 
 # Installation
 
