@@ -1,7 +1,7 @@
 /**
  * Created by kylemills on 1/10/18.
  */
-import { chain, toPairs, fromPairs, map, lens, assoc, propOr, compose, view, set } from 'ramda'
+import { lens, assoc, propOr, compose, view, set } from 'ramda'
 
 const createGetterSetterPairs = customLens => ({
   get: state => view(customLens, state),
@@ -27,7 +27,6 @@ function flatten(input, reference, output) {
   return output
 }
 
-
 /*
  * Given a state create all the neccessary selectors irrespective of the shape.
  * @param state
@@ -36,9 +35,8 @@ function flatten(input, reference, output) {
 function createLensForState(state) {
   // Flatten the state, keys become dot props
   const flatState = flatten(state)
-  console.log(flatState)
   // create blank selectors object to populate
-  return Object.keys(flatState).reduce((object, key) => {
+  const selctorForAllProps = Object.keys(flatState).reduce((object, key) => {
     // check if key is a dot prop
     const fallBackState = flatState[key]
     const customLens = key.split('.')
@@ -48,9 +46,23 @@ function createLensForState(state) {
       // create a composed lens
       .reduce((pLens, cLens) => compose(pLens, cLens))
     // Add getter setter at dynamic key
-    object[key.split('.')[key.split('.').length - 1]] = createGetterSetterPairs(customLens)
+    object.props[key.split('.')[key.split('.').length - 1]] = createGetterSetterPairs(customLens)
+
     return object
-  }, {})
+  }, {
+    props: {}
+  })
+  const addListProps = Object.assign({
+    listProps: Object.keys(selctorForAllProps.props)
+  }, selctorForAllProps)
+  addListProps.getMany = (propsArray, state) => {
+    return propsArray.reduce((accum, prop) => {
+      return Object.assign({
+        [prop]: addListProps.props[prop].get(state)
+      }, accum)
+    }, {})
+  }
+  return addListProps
 }
 
 export default {

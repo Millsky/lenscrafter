@@ -8,9 +8,9 @@ describe('#createLensForState', function() {
         c: 3
       }
       var lens = lenscrafter(state)
-      expect(lens.a.get()).to.equal(1)
-      expect(lens.b.get()).to.equal(2)
-      expect(lens.c.get()).to.equal(3)
+      expect(lens.props.a.get()).to.equal(1)
+      expect(lens.props.b.get()).to.equal(2)
+      expect(lens.props.c.get()).to.equal(3)
     })
     it('Should create a lens for a object of depth 2', function() {
       var state = {
@@ -20,8 +20,8 @@ describe('#createLensForState', function() {
         }
       }
       var lens = lenscrafter(state)
-      expect(lens.b.get()).to.equal(1)
-      expect(lens.c.get()).to.equal(2)
+      expect(lens.props.b.get()).to.equal(1)
+      expect(lens.props.c.get()).to.equal(2)
     })
     it('Should create a lens for a object of depth 3', function() {
       var state = {
@@ -32,7 +32,7 @@ describe('#createLensForState', function() {
         }
       }
       var lens = lenscrafter(state)
-      expect(lens.c.get()).to.equal(2)
+      expect(lens.props.c.get()).to.equal(2)
     })
     it('Should create a lens for a object of variable depth', function() {
       var initialState = {
@@ -47,9 +47,9 @@ describe('#createLensForState', function() {
         }
       }
       var lens = lenscrafter(initialState)
-      expect(lens.m.get()).to.equal('q')
-      expect(lens.d.get()).to.equal(1)
-      expect(lens.c.get()).to.equal(2)
+      expect(lens.props.m.get()).to.equal('q')
+      expect(lens.props.d.get()).to.equal(1)
+      expect(lens.props.c.get()).to.equal(2)
     })
     it('Should return the correct value regardless of shape', function() {
       var initialState = {
@@ -75,14 +75,14 @@ describe('#createLensForState', function() {
         }
       }
       var lens = lenscrafter(initialState)
-      expect(lens.m.get(currentState)).to.equal('q')
-      expect(lens.d.get(currentState)).to.equal(1)
-      expect(lens.c.get(currentState)).to.equal(500)
+      expect(lens.props.m.get(currentState)).to.equal('q')
+      expect(lens.props.d.get(currentState)).to.equal(1)
+      expect(lens.props.c.get(currentState)).to.equal(500)
     })
     it('Should create properties with multiple letters', function() {
       var initialState = { cool: 1, bool: { a: 2 } }
       var lens = lenscrafter(initialState)
-      expect(lens.cool.get()).to.equal(1)
+      expect(lens.props.cool.get()).to.equal(1)
     })
     it('Should create a lens for an object of depth 2 for all depth 1 properties', function() {
       var state = {
@@ -93,7 +93,6 @@ describe('#createLensForState', function() {
         }
       }
       var lens = lenscrafter(state)
-      console.log(Object.keys(lens))
       expect(true).to.equal(true)
     })
     it('Should return properties without direct values', function() {
@@ -105,7 +104,7 @@ describe('#createLensForState', function() {
         }
       }
       var lens = lenscrafter(state)
-      var result = lens.b.get()
+      var result = lens.props.b.get()
       expect(result).to.deep.equal(state.a.b)
     })
   })
@@ -117,7 +116,7 @@ describe('#createLensForState', function() {
         c: 3
       })
       var lens = lenscrafter(state)
-      const newState = lens.a.set(10, state)
+      const newState = lens.props.a.set(10, state)
       expect(newState.a).to.equal(10)
     })
     it('Should create a lens for a object of depth 2', function() {
@@ -128,7 +127,7 @@ describe('#createLensForState', function() {
         }
       }
       var lens = lenscrafter(state)
-      const newState = lens.b.set(10, state)
+      const newState = lens.props.b.set(10, state)
       expect(newState.a.b).to.equal(10)
     })
     it('Should create a lens for a object of depth 3', function() {
@@ -140,7 +139,7 @@ describe('#createLensForState', function() {
         }
       }
       var lens = lenscrafter(state)
-      const newState = lens.c.set(10, state)
+      const newState = lens.props.c.set(10, state)
       expect(newState.a.b.c).to.equal(10)
     })
     it('Should create a lens for a object of variable depth', function() {
@@ -156,8 +155,21 @@ describe('#createLensForState', function() {
         }
       }
       var lens = lenscrafter(state)
-      const newState = lens.m.set('sadads', state)
+      const newState = lens.props.m.set('sadads', state)
       expect(newState.a.b.t.m).to.equal('sadads')
+    })
+  })
+  describe('#getMany', function() {
+    it('Should get multiple props when state is flat', function() {
+      var state = {
+        a: 1,
+        b: 2,
+        c: 3
+      }
+      var lens = lenscrafter(state)
+      const result = lens.getMany(['a', 'b'], state)
+      expect(result.a).to.equal(1)
+      expect(result.b).to.equal(2)
     })
   })
 })
