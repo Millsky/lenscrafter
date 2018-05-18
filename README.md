@@ -98,6 +98,50 @@ It can be ensured that when getting state, a value will always be returned as a 
 
 Returns the current value of the object at the specified property
 
+##### Property Resolution:
+
+If an object passed into lenscrafter contains a duplicate property. For example: 
+
+```javascript
+    const myObject = {
+        id: 1,
+        item1: {
+            id: 2,
+        },
+        item2: {
+            id: 3,
+        }
+    }
+```
+
+Instead of the id being acessible on the root, it will instead be accessed on it's immediate parent.
+
+```javascript
+    lens.props.item1.id.get()
+```
+
+Deeply nested properties will resolve in a similar way
+
+```javascript
+    const myObject = {
+        id: 1,
+        x: {
+            y: {
+                item1: {
+                    id: 2,
+                },
+                item2: {
+                    id: 3,
+                }
+            }
+        }
+    }
+```
+
+```javascript
+    lens.props.item1.id.get()
+```
+
 #### ```newLens.props.property.set(value, object)```: 
 `value`: The value to set the property to.
 
@@ -113,6 +157,10 @@ Returns the lens used for getting and setting, this is useful for further compos
 `propsArray: Array<string>`: An array of properties to get the value of
 
 `object`: The object for which the values should be retrieved
+
+
+### ```newLens.getInitialized()```
+Returns the initial object passed into ```lenscrafter(object)```
 
 # Installation
 

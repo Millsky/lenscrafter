@@ -9,7 +9,28 @@ const createGetterSetterPairs = customLens => ({
   lens: customLens
 })
 
-
+/*
+ * Function to check if a given key has a duplicate child in the object
+ * @param flatState - An object representing the partially flattened state
+ * @param k - Key to check
+ * @return {boolean}
+ */
+function hasDuplicateChild (flatState, k) {
+  const keyList = Object.keys(flatState)
+  let hasDuplicateChild = false
+  let duplicateCount = 0
+  for (let j = 0 ; j < keyList.length ; j++) {
+    const currentKey = keyList[j]
+    const splitKey = currentKey.split('.')
+    if (splitKey[splitKey.length -1] === k) {
+      duplicateCount += 1
+      if (duplicateCount > 1) {
+        hasDuplicateChild = true
+      }
+    }
+  }
+  return hasDuplicateChild
+}
 
 
 function flatten(input, reference, output) {
@@ -46,15 +67,27 @@ function createLensForState(state) {
       // create a composed lens
       .reduce((pLens, cLens) => compose(pLens, cLens))
     // Add getter setter at dynamic key
-    object.props[key.split('.')[key.split('.').length - 1]] = createGetterSetterPairs(customLens)
+    const prop = key.split('.')[key.split('.').length - 1]
+    // Check if has parent
+    const hasParent = key.indexOf('.') > -1
+    // If has parent and child is a dupe
+    if (hasDuplicateChild(flatState, prop) && hasParent) {
+      // Create nested prop for prop-er resolution
+      const parentProp = key.split('.')[key.split('.').length - 2]
+      object.props[parentProp][prop] = createGetterSetterPairs(customLens)
+    } else {
+      object.props[prop] = createGetterSetterPairs(customLens)
+    }
 
     return object
   }, {
     props: {}
   })
+
   const addListProps = Object.assign({
     listProps: Object.keys(selctorForAllProps.props)
   }, selctorForAllProps)
+
   addListProps.getMany = (propsArray, state) => {
     return propsArray.reduce((accum, prop) => {
       return Object.assign({
@@ -62,6 +95,9 @@ function createLensForState(state) {
       }, accum)
     }, {})
   }
+
+  addListProps.getInitialized = () => state
+
   return addListProps
 }
 

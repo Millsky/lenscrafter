@@ -1,6 +1,6 @@
 {
   "name": "lenscrafter",
-  "version": "1.0.4",
+  "version": "1.1.4",
   "description": "A Micro Library for immutable and safe state access",
   "main": "index.js",
   "jsnext:main": "src/index.js",

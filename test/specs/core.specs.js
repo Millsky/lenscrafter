@@ -84,6 +84,29 @@ describe('#createLensForState', function() {
       var lens = lenscrafter(initialState)
       expect(lens.props.cool.get()).to.equal(1)
     })
+    it('Should not return properties that were not declared in the initial map', function() {
+      var initialState = { cool: 1, bool: { a: 2, qq: 1 } }
+      var lens = lenscrafter(initialState)
+      expect(lens.props.stool).to.equal(undefined)
+    })
+    it('Should handle duplicate properties by resolving the dot props', function () {
+      var initialState = {
+        x: {
+          item1: {
+            id: 1
+          },
+          item2: {
+            id: 3
+          }
+        },
+        id: 8
+      }
+      var lens = lenscrafter(initialState)
+      console.log(lens.props.x)
+      expect(lens.props.item1.id.get()).to.equal(1)
+      expect(lens.props.item2.id.get()).to.equal(3)
+      expect(lens.props.id.get()).to.equal(8)
+    })
     it('Should create a lens for an object of depth 2 for all depth 1 properties', function() {
       var state = {
         a: {
