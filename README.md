@@ -47,7 +47,7 @@ const someNestedProperty = (state) => {
 
 const someNestedValue = (state) => {
    const { someNestedValue } = someNestedProperty(state);
-   return state || initialState.someNestedProperty.someNestedValue;
+   return someNestedValue || initialState.someNestedProperty.someNestedValue;
 };
 ```
 
