@@ -96,6 +96,17 @@ function createLensForState(state) {
     }, {})
   }
 
+  addListProps.wrapAll = (lens) => {
+    const newProps = Object.keys(addListProps.props).reduce((accum, prop) => {
+      return Object.assign({
+        [prop]: createGetterSetterPairs(compose(lens, addListProps.props[prop].lens))
+      }, accum)
+    }, {})
+    return {
+      props: newProps,
+    }
+  }
+
   addListProps.getInitialized = () => state
 
   return addListProps

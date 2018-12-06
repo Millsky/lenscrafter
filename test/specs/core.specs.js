@@ -102,7 +102,6 @@ describe('#createLensForState', function() {
         id: 8
       }
       var lens = lenscrafter(initialState)
-      console.log(lens.props.x)
       expect(lens.props.item1.id.get()).to.equal(1)
       expect(lens.props.item2.id.get()).to.equal(3)
       expect(lens.props.id.get()).to.equal(8)
@@ -180,6 +179,35 @@ describe('#createLensForState', function() {
       var lens = lenscrafter(state)
       const newState = lens.props.m.set('sadads', state)
       expect(newState.a.b.t.m).to.equal('sadads')
+    })
+  })
+  describe('#wrapAll', function() {
+    it('Should wrap the lower level state getter with a higher level lens', function() {
+      var topLevelState = {
+        z: {}
+      }
+      var state = {
+        a: {
+          b: {
+            c: 2
+          }
+        }
+      }
+      var composedState = {
+        z: {
+          a: {
+            b: {
+              c: 123
+            },
+            q: 1
+          }
+        }
+      }
+      var lens = lenscrafter(state)
+      var topLens = lenscrafter(topLevelState)
+      var wrappedLens = lens.wrapAll(topLens.props.z.lens)
+      const result = wrappedLens.props.a.get(composedState)
+      expect(result).to.deep.equal(composedState.z.a)
     })
   })
   describe('#getMany', function() {
