@@ -205,7 +205,7 @@ describe('#createLensForState', function() {
       }
       var lens = lenscrafter(state)
       var topLens = lenscrafter(topLevelState)
-      var wrappedLens = lens.wrapAll(topLens.props.z.lens)
+      var wrappedLens = lens.wrapAll(topLens.props.z.lens, ['z'])
       const result = wrappedLens.props.a.get(composedState)
       expect(result).to.deep.equal(composedState.z.a)
     })

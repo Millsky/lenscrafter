@@ -3,11 +3,14 @@
  */
 import { lens, assoc, propOr, compose, view, set } from 'ramda'
 
-const createGetterSetterPairs = customLens => ({
-  get: state => view(customLens, state),
-  set: (value, state) => set(customLens, value, state),
-  lens: customLens
-})
+const createGetterSetterPairs = (customLens, customLensPath) => {
+  return {
+    get: state => view(customLens, state),
+    set: (value, state) => set(customLens, value, state),
+    lens: customLens,
+    path: customLensPath
+  }
+}
 
 /*
  * Function to check if a given key has a duplicate child in the object
@@ -60,7 +63,8 @@ function createLensForState(state) {
   const selctorForAllProps = Object.keys(flatState).reduce((object, key) => {
     // check if key is a dot prop
     const fallBackState = flatState[key]
-    const customLens = key.split('.')
+    const customLensPath = key.split('.')
+    const customLens = customLensPath
       // Create a lens for the property
       .map(objectProperty =>
         lens(propOr(fallBackState, objectProperty), assoc(objectProperty)))
@@ -74,9 +78,9 @@ function createLensForState(state) {
     if (hasDuplicateChild(flatState, prop) && hasParent) {
       // Create nested prop for prop-er resolution
       const parentProp = key.split('.')[key.split('.').length - 2]
-      object.props[parentProp][prop] = createGetterSetterPairs(customLens)
+      object.props[parentProp][prop] = createGetterSetterPairs(customLens, customLensPath)
     } else {
-      object.props[prop] = createGetterSetterPairs(customLens)
+      object.props[prop] = createGetterSetterPairs(customLens, customLensPath)
     }
 
     return object
@@ -96,14 +100,17 @@ function createLensForState(state) {
     }, {})
   }
 
-  addListProps.wrapAll = (lens) => {
+  addListProps.wrapAll = (lens, path) => {
     const newProps = Object.keys(addListProps.props).reduce((accum, prop) => {
       return Object.assign({
-        [prop]: createGetterSetterPairs(compose(lens, addListProps.props[prop].lens))
+        [prop]: createGetterSetterPairs(
+          compose(lens, addListProps.props[prop].lens),
+          [...path, ...addListProps.props[prop].path]
+        )
       }, accum)
     }, {})
     return {
-      props: newProps,
+      props: newProps
     }
   }
 
